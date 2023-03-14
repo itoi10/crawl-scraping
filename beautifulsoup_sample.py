@@ -1,10 +1,12 @@
-import json
-import requests
+from __future__ import annotations
+
 from urllib.parse import urljoin
+
+import requests
 from bs4 import BeautifulSoup
 
 
-class ReqBS:
+class BSTool:
     def __init__(self, url: str):
         self.rsp = requests.get(url)
         self.url = self.rsp.url
@@ -23,7 +25,7 @@ class ReqBS:
 
 def fetch_article(article_url: str) -> dict[str, str]:
     print(f"{article_url = }")
-    bs = ReqBS(article_url)
+    bs = BSTool(article_url)
     item = dict()
     item["title"] = bs.text("h1[class*=title]")
     item["time"] = bs.text("main header time")
@@ -33,11 +35,11 @@ def fetch_article(article_url: str) -> dict[str, str]:
 
 
 if __name__ == "__main__":
-    bs = ReqBS("https://www.nikkei.com/")
+    bs = BSTool("https://www.nikkei.com/")
     article_urls = bs.get_urls('article h2 a[href*="/article/"]')
     article_items = map(fetch_article, article_urls)
 
-    with open("./out.jl", "w", encoding="utf8") as f:
+    with open("./out_bs.jsonl", "w", encoding="utf8") as f:
         for item in article_items:
             if item["content"]:
                 print(item)

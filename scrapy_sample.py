@@ -1,6 +1,10 @@
+import os
 import subprocess
+
 import scrapy
 from scrapy.exceptions import DropItem
+
+pyfilename = os.path.basename(__file__)[:-3]  # .pyを除いたファイル名
 
 
 class MySpider(scrapy.Spider):
@@ -33,7 +37,7 @@ class MySpider(scrapy.Spider):
             "Accept-Language": "ja",
         },
         # アイテム・パイプライン
-        "ITEM_PIPELINES": {"main.MyItemPipeline": 500},
+        "ITEM_PIPELINES": {f"{pyfilename}.MyItemPipeline": 500},
         # 出力ファイルを日本語にする
         "FEED_EXPORT_ENCODING": "utf-8"
         # ログレベル デフォルト"DEBUG"
@@ -52,4 +56,4 @@ class MyItemPipeline:
 
 if __name__ == "__main__":
     # Scrapy実行
-    subprocess.run("scrapy runspider main.py -O out.jl", shell=True)
+    subprocess.run(f"scrapy runspider {pyfilename}.py -O out_scrapy.jsonl", shell=True)

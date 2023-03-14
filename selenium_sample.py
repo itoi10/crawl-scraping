@@ -1,10 +1,15 @@
-import chromedriver_binary
+from __future__ import annotations
+
 from selenium import webdriver
-from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.common.by import By
+from webdriver_manager.chrome import ChromeDriverManager
 
 
 class MyDriver(webdriver.Chrome):
+    """WebDriverの拡張クラス"""
+
     def __init__(self):
         options = Options()
         options.add_argument("--headless")  # headlessモード (ブラウザを表示しない)
@@ -12,7 +17,8 @@ class MyDriver(webdriver.Chrome):
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--lang=ja")
-        super().__init__(options=options)
+        service = ChromeService(executable_path=ChromeDriverManager().install())
+        super().__init__(service=service, options=options)
         self.implicitly_wait(3)  # 暗黙の待機時間 (要素が見つかるまで指定秒数待機する)
 
     def __del__(self):
@@ -34,16 +40,10 @@ class MyDriver(webdriver.Chrome):
         self.close()
         self.switch_to.window(self.window_handles[-1])
 
-    def save_image(self, xpath: str, filename: str):
-        """画像を保存する"""
-        img_elm = self.find_elements_by_xpath(xpath)
-        with open(f"{filename}", "wb") as f:
-            f.write(img_elm.screenshot_as_png)
-
 
 if __name__ == "__main__":
 
-    with MyDriver() as driver, open("./out.jl", "w", encoding="utf8") as f:
+    with MyDriver() as driver, open("./out_selenium.jsonl", "w", encoding="utf8") as f:
         driver.get("https://www.nikkei.com/")
 
         for article_url in [
