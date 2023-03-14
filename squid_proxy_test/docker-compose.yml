@@ -1,0 +1,13 @@
+# https://hub.docker.com/r/ubuntu/squid
+# https://www.j-one.ne.jp/squid-cache/
+version: '3'
+services:
+  squid-proxy:
+    image: ubuntu/squid
+    ports:
+      - "3128:3128"
+    environment:
+      - TZ=UTC
+    # volumes:
+      - ./vol/squid.conf/:/etc/squid/squid.conf
+    restart: always
