@@ -4,6 +4,7 @@
 
 - BeautifulSoup
 
+- Selenium
+
 - Scrapy
 
-- Selenium
