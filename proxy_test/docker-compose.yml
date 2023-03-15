@@ -1,0 +1,11 @@
+# https://hub.docker.com/r/dperson/torproxy
+version: '3'
+services:
+  torproxy:
+    image: dperson/torproxy
+    ports:
+      - "8118:8118"
+      - "9050:9050"
+    environment:
+      - TOR_MaxCircuitDirtiness=5
+    restart: always
