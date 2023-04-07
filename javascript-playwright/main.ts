@@ -16,12 +16,24 @@ void (async () => {
 
   await page.goto('https://www.nikkei.com/')
 
-  const detailUrls = await page.$$eval(
-    'article h2 a[href*="/article/"]',
-    (links: HTMLLinkElement[]) => links.map(a => a.href)
-  )
+  function toUrl (links: HTMLLinkElement[]): string[] { return links.map(a => a.href) }
 
-  console.log(detailUrls)
+  const detailUrls = await page.$$eval('article h2 a[href*="/article/"]', toUrl)
+
+  console.log(detailUrls.length)
+
+  for (const url of detailUrls) {
+    await page.goto(url)
+    try {
+      const title = await page.$eval('h1[class*=title]', (el) => el.textContent)
+      const time = await page.$eval('main header time', (el) => el.textContent)
+      const content = await page.$eval('main section[class*=container]', (el) => el.textContent)
+      const data = { title, time, content, url }
+      console.log(data)
+    } catch (e) {
+      console.log('取得失敗')
+    }
+  }
 
   await browser.close()
 })()
